@@ -11,7 +11,10 @@ const initialFieldsValue = {
   imageFile: null,
 };
 
-const Employee = () => {
+const Employee = (props) => {
+  // eslint-disable-next-line react/prop-types
+  const { addOrEdit } = props;
+
   const [value, setValues] = useState(initialFieldsValue);
   const [error, setError] = useState({});
 
@@ -55,6 +58,12 @@ const Employee = () => {
     return Object.values(temp).every((x) => x === true);
   };
 
+  const resetForm = () => {
+    setValues(initialFieldsValue);
+    document.getElementById('image-upload').value = null;
+    setError({});
+  };
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
@@ -64,6 +73,8 @@ const Employee = () => {
       formData.append("employeeName", value.employeeName);
       formData.append("occupation", value.occupation);
       formData.append("imageFile", value.imageFile);
+
+      addOrEdit(formData,resetForm);
     }
   };
 
@@ -92,6 +103,7 @@ const Employee = () => {
             <div className="form-group">
               <input
                 type="file"
+                id="image-upload"
                 accept="image/*"
                 className={"form-control-file" + applyErrorClass('imageSrc')}
                 onChange={showPreview}

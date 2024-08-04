@@ -20,5 +20,8 @@ namespace EmployeeRegisterAPI.Models
 
         [Column(TypeName = "nvarchar(100)")]
         public string ImageName { get; set; }
+        
+        [NotMapped]
+        public IFormFile ImageFile { get; set; }
     }
 }
