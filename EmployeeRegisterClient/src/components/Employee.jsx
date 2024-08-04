@@ -13,15 +13,15 @@ const initialFieldsValue = {
 
 const Employee = () => {
   const [value, setValues] = useState(initialFieldsValue);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState({});
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value: inputValue } = e.target;
     setValues({
       ...value,
-      [name]: value,
+      [name]: inputValue,
     });
-  };
+  };  
 
   const showPreview = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -47,20 +47,27 @@ const Employee = () => {
   };
 
   const validate = () => {
-    let temp = {}
-    temp.employeeName = value.employeeName == "" ? false : true;
-    temp.imageSrc = value.imageSrc == defaultImageSrc ? false : true;
+    let temp = {};
+    temp.employeeName = value.employeeName === "" ? false : true;
+    temp.imageSrc = value.imageSrc === defaultImageSrc ? false : true;
     setError({ ...temp });
 
-    return Object.values(temp).every(x => x===true);
-  }
+    return Object.values(temp).every((x) => x === true);
+  };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if(validate()){
-      console.log("submitted");
+    if (validate()) {
+      const formData = new FormData();
+
+      formData.append("employeeId", value.employeeId);
+      formData.append("employeeName", value.employeeName);
+      formData.append("occupation", value.occupation);
+      formData.append("imageFile", value.imageFile);
     }
   };
+
+  const applyErrorClass = field => ((field in error && error[field] === false) ? 'invalid-field' : '');
 
   return (
     <>
@@ -86,8 +93,7 @@ const Employee = () => {
               <input
                 type="file"
                 accept="image/*"
-                className="form-control-file"
-                name="imageFile"
+                className={"form-control-file" + applyErrorClass('imageSrc')}
                 onChange={showPreview}
               />
             </div>
@@ -95,7 +101,7 @@ const Employee = () => {
             <div className="form-group">
               <input
                 type="text"
-                className="form-control"
+                className={"form-control" + applyErrorClass('employeeName')}
                 placeholder="Employee Name"
                 name="employeeName"
                 value={value.employeeName}
