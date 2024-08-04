@@ -1,7 +1,7 @@
 
 const Employee = () => {
   return (
-    <div>Employee</div>
+    <div>Employee form</div>
   )
 }
 
