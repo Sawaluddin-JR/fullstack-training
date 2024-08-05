@@ -3,10 +3,10 @@ import { useState } from "react";
 const defaultImageSrc = "/img/profilpn.png";
 
 const initialFieldsValue = {
-  employeeId: 0,
-  employeeName: "",
-  occupation: "",
-  imageName: "",
+  employeeID: 0,
+  employeeName: '',
+  occupation: '',
+  imageName: '',
   imageSrc: defaultImageSrc,
   imageFile: null,
 };
@@ -15,14 +15,14 @@ const Employee = (props) => {
   // eslint-disable-next-line react/prop-types
   const { addOrEdit } = props;
 
-  const [value, setValues] = useState(initialFieldsValue);
-  const [error, setError] = useState({});
+  const [values, setValues] = useState(initialFieldsValue);
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
-    const { name, value: inputValue } = e.target;
+    const { name, value } = e.target;
     setValues({
-      ...value,
-      [name]: inputValue,
+      ...values,
+      [name]: value,
     });
   };  
 
@@ -32,53 +32,57 @@ const Employee = (props) => {
       const reader = new FileReader();
       reader.onload = (x) => {
         setValues({
-          ...value,
-          imageFile: imageFile,
+          ...values,
+          imageFile,
           imageSrc: x.target.result,
-          imageName: imageFile.name,
         });
       };
       reader.readAsDataURL(imageFile);
     } else {
       setValues({
-        ...value,
+        ...values,
         imageFile: null,
         imageSrc: defaultImageSrc,
-        imageName: "",
       });
     }
   };
 
   const validate = () => {
     let temp = {};
-    temp.employeeName = value.employeeName === "" ? false : true;
-    temp.imageSrc = value.imageSrc === defaultImageSrc ? false : true;
-    setError({ ...temp });
+    temp.employeeName = values.employeeName === "" ? false : true;
+    temp.occupation = values.occupation === "" ? false : true;
+    temp.imageSrc = values.imageSrc === defaultImageSrc ? false : true;
+    setErrors({ ...temp });
 
     return Object.values(temp).every((x) => x === true);
   };
 
   const resetForm = () => {
     setValues(initialFieldsValue);
-    document.getElementById('image-upload').value = null;
-    setError({});
+    document.getElementById('image-uploader').value = null;
+    setErrors({});
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
       const formData = new FormData();
+      formData.append("employeeID", values.employeeID);
+      formData.append("employeeName", values.employeeName);
+      formData.append("occupation", values.occupation);
+      formData.append("imageName", values.imageName);
+      formData.append("imageFile", values.imageFile);
 
-      formData.append("employeeId", value.employeeId);
-      formData.append("employeeName", value.employeeName);
-      formData.append("occupation", value.occupation);
-      formData.append("imageFile", value.imageFile);
+      console.log("Form Data to be sent:");
+      for (let pair of formData.entries()) {
+         console.log(pair[0] + ': ' + pair[1]);
+      }
 
       addOrEdit(formData,resetForm);
     }
   };
 
-  const applyErrorClass = field => ((field in error && error[field] === false) ? 'invalid-field' : '');
+  const applyErrorClass = field => ((field in errors && errors[field] === false) ? 'invalid-field' : '');
 
   return (
     <>
@@ -89,13 +93,11 @@ const Employee = (props) => {
       <form
         autoComplete="off"
         noValidate
-        className="mb-4"
         onSubmit={handleFormSubmit}
       >
         <div className="card">
           <img
-            src={value.imageSrc}
-            alt={value.imageName}
+            src={values.imageSrc}
             className="card-img-top"
           />
 
@@ -103,7 +105,7 @@ const Employee = (props) => {
             <div className="form-group">
               <input
                 type="file"
-                id="image-upload"
+                id="image-uploader"
                 accept="image/*"
                 className={"form-control-file" + applyErrorClass('imageSrc')}
                 onChange={showPreview}
@@ -112,22 +114,20 @@ const Employee = (props) => {
 
             <div className="form-group">
               <input
-                type="text"
                 className={"form-control" + applyErrorClass('employeeName')}
                 placeholder="Employee Name"
                 name="employeeName"
-                value={value.employeeName}
+                value={values.employeeName}
                 onChange={handleInputChange}
               />
             </div>
 
             <div className="form-group">
               <input
-                type="text"
                 className="form-control"
                 placeholder="Occupation"
                 name="occupation"
-                value={value.occupation}
+                value={values.occupation}
                 onChange={handleInputChange}
               />
             </div>

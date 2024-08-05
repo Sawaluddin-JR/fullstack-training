@@ -1,25 +1,25 @@
 import Employee from "./Employee";
 import axios from "axios";
 
-const EmployeeList = () => {
-  
-  const employeeAPI = (url = '') => {
-    return {
-      fetchAll: () => axios.get(url),
-      create: (newRecord) => axios.post(url, newRecord),
-      update: (id, updatedRecord) => axios.put(`${url}/${id}`, updatedRecord),
-      delete: (id) => axios.delete(`${url}/${id}`),
-    }    
-  }
+const employeeAPI = (url = "http://localhost:8000/api/Employee") => {
+  return {
+    fetchAll: () => axios.get(url),
+    create: (newRecord) => axios.post(url, newRecord),
+    update: (id, updatedRecord) => axios.put(url + id, updatedRecord),
+    delete: (id) => axios.delete(url + id),
+  };
+};
 
-  const addOrEdit =(formData, onSuccess) => {
-    employeeAPI().create(formData)
-    .then(res => {
+const addOrEdit = (formData, onSuccess) => {
+  employeeAPI()
+    .create(formData)
+    .then((res) => {
       onSuccess();
     })
-    .catch(err => console.log(err))
-  }
+    .catch((err) => console.log(err));
+};
 
+const EmployeeList = () => {
   return (
     <div className="row">
       <div className="col-md-12">

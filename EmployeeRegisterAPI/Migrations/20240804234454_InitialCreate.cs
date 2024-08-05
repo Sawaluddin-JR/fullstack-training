@@ -14,15 +14,15 @@ namespace EmployeeRegisterAPI.Migrations
                 name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    EmployeeID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    EmployeeName = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     Occupation = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     ImageName = table.Column<string>(type: "nvarchar(100)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
+                    table.PrimaryKey("PK_Employees", x => x.EmployeeID);
                 });
         }
 
