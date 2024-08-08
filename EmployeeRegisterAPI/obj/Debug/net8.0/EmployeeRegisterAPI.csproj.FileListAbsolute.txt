@@ -136,3 +136,4 @@ F:\ASP.NET\fullstack-training\EmployeeRegisterAPI\obj\Debug\net8.0\refint\Employ
 F:\ASP.NET\fullstack-training\EmployeeRegisterAPI\obj\Debug\net8.0\EmployeeRegisterAPI.pdb
 F:\ASP.NET\fullstack-training\EmployeeRegisterAPI\obj\Debug\net8.0\EmployeeRegisterAPI.genruntimeconfig.cache
 F:\ASP.NET\fullstack-training\EmployeeRegisterAPI\obj\Debug\net8.0\ref\EmployeeRegisterAPI.dll
+F:\ASP.NET\fullstack-training\EmployeeRegisterAPI\obj\Debug\net8.0\EmployeeRegisterAPI.sourcelink.json

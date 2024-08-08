@@ -28,7 +28,15 @@ namespace EmployeeRegisterAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
         {
-            return await _context.Employees.ToListAsync();
+            return await _context.Employees
+            .Select(x => new Employee(){
+                EmployeeID = x.EmployeeID,
+                EmployeeName = x.EmployeeName,
+                Occupation = x.Occupation,
+                ImageName = x.ImageName,
+                ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.ImageName)
+            })
+            .ToListAsync();
         }
 
         // GET api/Employee/5
@@ -49,13 +57,7 @@ namespace EmployeeRegisterAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Employee>> PostEmployee([FromForm] Employee employee)
         {
-            // Logging received data
-            Console.WriteLine("Received Employee Data:");
-            Console.WriteLine($"Employee Name: {employee.EmployeeName}");
-            Console.WriteLine($"Occupation: {employee.Occupation}");
-            Console.WriteLine($"Image Name: {employee.ImageName}");
-            Console.WriteLine($"Image File: {employee.ImageFile?.FileName}");
-
+            // Validasi input
             if (string.IsNullOrEmpty(employee.EmployeeName))
             {
                 return BadRequest("Employee Name is required.");
@@ -70,10 +72,17 @@ namespace EmployeeRegisterAPI.Controllers
             }
 
             employee.ImageName = await SaveImage(employee.ImageFile);
+
+            if (employee.EmployeeID == 0)
+            {
+                employee.EmployeeID = 0;
+            }
+
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
 
             return StatusCode(201);
+            //return CreatedAtAction(nameof(GetEmployee), new { id = employee.EmployeeID }, employee);
         }
 
         // PUT api/Employee/5
@@ -83,6 +92,12 @@ namespace EmployeeRegisterAPI.Controllers
             if (id != employee.EmployeeID)
             {
                 return BadRequest();
+            }
+
+            if(employee.ImageFile != null)
+            {
+                DeleteImage(employee.ImageName);
+                employee.ImageName = await SaveImage(employee.ImageFile);
             }
 
             _context.Entry(employee).State = EntityState.Modified;
@@ -116,10 +131,11 @@ namespace EmployeeRegisterAPI.Controllers
                 return NotFound();
             }
 
+            DeleteImage(employee.ImageName);
             _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return employee;
         }
 
         private bool EmployeeExists(int id)
@@ -132,7 +148,7 @@ namespace EmployeeRegisterAPI.Controllers
         {                
             string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', '-');
             imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(imageFile.FileName);
-            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath,"Images", imageName);
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
 
             using (var fileStream = new FileStream(imagePath, FileMode.Create))
             {
@@ -140,6 +156,14 @@ namespace EmployeeRegisterAPI.Controllers
             }
 
             return imageName;
+        }
+
+        [NonAction]
+        public void DeleteImage(string imageName)
+        {
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
+            if (System.IO.File.Exists(imagePath))
+                System.IO.File.Delete(imagePath);
         }
     }
 }

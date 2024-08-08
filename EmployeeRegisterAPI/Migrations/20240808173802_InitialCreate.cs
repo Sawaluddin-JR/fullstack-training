@@ -16,9 +16,9 @@ namespace EmployeeRegisterAPI.Migrations
                 {
                     EmployeeID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeName = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    Occupation = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    ImageName = table.Column<string>(type: "nvarchar(100)", nullable: false)
+                    EmployeeName = table.Column<string>(type: "nvarchar(50)", nullable: true),
+                    Occupation = table.Column<string>(type: "nvarchar(50)", nullable: true),
+                    ImageName = table.Column<string>(type: "nvarchar(100)", nullable: true)
                 },
                 constraints: table =>
                 {

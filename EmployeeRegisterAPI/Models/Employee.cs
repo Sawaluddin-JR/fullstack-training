@@ -9,22 +9,24 @@ namespace EmployeeRegisterAPI.Models
 {
     public class Employee
     {
-         [Key]
+        [Key]
         public int EmployeeID { get; set; }
 
+        //[Required]
         [Column(TypeName ="nvarchar(50)")]
-        public string EmployeeName { get; set; }
+        public string? EmployeeName { get; set; }
 
+        //[Required]
         [Column(TypeName = "nvarchar(50)")]
-        public string Occupation { get; set; }
+        public string? Occupation { get; set; }
 
         [Column(TypeName = "nvarchar(100)")]
-        public string ImageName { get; set; }
+        public string? ImageName { get; set; }
 
         [NotMapped]
-        public IFormFile ImageFile { get; set; }
+        public IFormFile? ImageFile { get; set; }
 
         [NotMapped]
-        public string ImageSrc { get; set; }
+        public string? ImageSrc { get; set; }
     }
 }

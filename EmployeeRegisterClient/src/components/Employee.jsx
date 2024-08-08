@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const defaultImageSrc = "/img/profilpn.png";
 
@@ -8,21 +8,27 @@ const initialFieldsValue = {
   occupation: '',
   imageName: '',
   imageSrc: defaultImageSrc,
-  imageFile: null,
+  imageFile: null
 };
 
 const Employee = (props) => {
-  // eslint-disable-next-line react/prop-types
-  const { addOrEdit } = props;
+
+  const { addOrEdit, recordForEdit } = props;
 
   const [values, setValues] = useState(initialFieldsValue);
   const [errors, setErrors] = useState({});
 
-  const handleInputChange = (e) => {
+  useEffect(() => {
+    if (recordForEdit !== null) {
+      setValues(recordForEdit);
+    }
+  }, [recordForEdit]);
+
+  const handleInputChange = e => {
     const { name, value } = e.target;
     setValues({
       ...values,
-      [name]: value,
+      [name]: value
     });
   };  
 
@@ -49,12 +55,11 @@ const Employee = (props) => {
 
   const validate = () => {
     let temp = {};
-    temp.employeeName = values.employeeName === "" ? false : true;
-    temp.occupation = values.occupation === "" ? false : true;
-    temp.imageSrc = values.imageSrc === defaultImageSrc ? false : true;
-    setErrors({ ...temp });
+    temp.employeeName = values.employeeName == "" ? false : true;
+    temp.imageSrc = values.imageSrc == defaultImageSrc ? false : true;
+    setErrors(temp);
 
-    return Object.values(temp).every((x) => x === true);
+    return Object.values(temp).every(x => x == true);
   };
 
   const resetForm = () => {
@@ -66,23 +71,17 @@ const Employee = (props) => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      const formData = new FormData();
-      formData.append("employeeID", values.employeeID);
-      formData.append("employeeName", values.employeeName);
-      formData.append("occupation", values.occupation);
-      formData.append("imageName", values.imageName);
-      formData.append("imageFile", values.imageFile);
-
-      console.log("Form Data to be sent:");
-      for (let pair of formData.entries()) {
-         console.log(pair[0] + ': ' + pair[1]);
-      }
-
-      addOrEdit(formData,resetForm);
+      const formData = new FormData()
+      formData.append('employeeID', values.employeeID)
+      formData.append('employeeName', values.employeeName)
+      formData.append('occupation', values.occupation)
+      formData.append('imageName', values.imageName)
+      formData.append('imageFile', values.imageFile)
+      addOrEdit(formData, resetForm)
     }
   };
 
-  const applyErrorClass = field => ((field in errors && errors[field] === false) ? 'invalid-field' : '');
+  const applyErrorClass = field => ((field in errors && errors[field] == false) ? ' invalid-field' : '')
 
   return (
     <>
@@ -105,10 +104,10 @@ const Employee = (props) => {
             <div className="form-group">
               <input
                 type="file"
-                id="image-uploader"
                 accept="image/*"
                 className={"form-control-file" + applyErrorClass('imageSrc')}
                 onChange={showPreview}
+                id="image-uploader"
               />
             </div>
 
